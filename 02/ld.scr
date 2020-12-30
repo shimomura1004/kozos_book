@@ -1,0 +1,36 @@
+/* OUTPUT_FORMAT("elf32-h8300") */
+OUTPUT_ARCH(h8300h)
+ENTRY("_start")
+
+SECTIONS
+{
+    /* 現在位置を 0x0 に設定 */
+    . = 0x0;
+
+    /* vectors を物理メモリの先頭に配置 */
+    /* h8 の場合、物理メモリの先頭に割り込みベクタが置かれる想定になっている*/
+    /* vector.o 内の .data セクションを持ってくる */
+    .vectors : {
+        vector.o(.data)
+    }
+
+    /* 術得てのオブジェクトファイルのテキストセクションを集める */
+    .text : {
+        *(.text)
+    }
+
+    .rodata : {
+        *(.strings)
+        *(.rodata)
+        *(.rodata.*)
+    }
+
+    .data : {
+        *(.data)
+    }
+
+    .bss : {
+        *(.bss)
+        *(COMMON)
+    }
+}
